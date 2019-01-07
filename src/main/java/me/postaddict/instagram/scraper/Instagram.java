@@ -1,8 +1,13 @@
 package me.postaddict.instagram.scraper;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.CookieManager;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import me.postaddict.instagram.scraper.exception.InstagramAuthException;
@@ -30,12 +35,17 @@ import me.postaddict.instagram.scraper.request.parameters.LocationParameter;
 import me.postaddict.instagram.scraper.request.parameters.MediaCode;
 import me.postaddict.instagram.scraper.request.parameters.TagName;
 import me.postaddict.instagram.scraper.request.parameters.UserParameter;
+import okhttp3.Cookie;
 import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.BufferedSink;
 
 @AllArgsConstructor
 public class Instagram implements AuthenticatedInsta {
@@ -68,6 +78,69 @@ public class Instagram implements AuthenticatedInsta {
         }
     }
     
+    public void uploadPost(File image) throws IOException {
+    	 String upload_id = String.valueOf(System.currentTimeMillis());
+		
+    	 
+//		 RequestBody requestBody = new MultipartBody.Builder()
+//				 .setType(MultipartBody.FORM)
+//				 .addPart(
+//				          Headers.of("Content-Disposition", "form-data; name=\"upload_id\""),
+//				          RequestBody.create(null, upload_id))
+//				 .addPart(
+//				          Headers.of("Content-Disposition", "form-data; name=\"photo\""),
+//				          RequestBody.create(MediaType.parse("image/jpeg"), image))
+//				 .build();
+    	 RequestBody requestBody = new RequestBody() {
+    		 
+			@Override
+			public void writeTo(BufferedSink sink) throws IOException {
+				
+				sink.writeUtf8(
+						"Content-Disposition: form-data; name=\"upload_id\"\n" + 
+						"\n" + 
+						upload_id+"\n" + 
+						
+						"Content-Disposition: form-data; name=\"photo\"; filename=\"photo.jpg\"\n" + 
+						"Content-Type: image/jpeg\n" + 
+						"\n");
+				byte[] bytes = new byte[(int) image.length()];
+				FileInputStream in = new FileInputStream(image);
+				in.read(bytes);
+				in.close();
+				
+				sink.write(bytes);
+				sink.writeUtf8(
+						"Content-Disposition: form-data; name=\"media_type\"\n" + 
+						"\n" + 
+						"1\n" );
+			}
+			
+			@Override
+			public MediaType contentType() {
+				return MediaType.parse("application/octet-stream");
+			}
+		};
+			
+		Request request = new Request.Builder()
+				.url(Endpoint.POST_UPLOAD)
+				.addHeader("X-Instagram-AJAX", "1")
+				.addHeader("x-requested-with", "XMLHttpRequest")
+				.addHeader("Origin", "https://www.instagram.com")
+				.addHeader("Referer", "https://www.instagram.com/create/crop/")
+				.post(requestBody)
+				.build();
+		
+        Response response = executeHttpRequest(withCsrfToken(request));
+        try(ResponseBody body = response.body()) {
+        	System.out.println();
+        	System.out.println("Header: "+response.headers());
+        	System.out.println();
+            System.out.println("Body: "+body.string());
+        	System.out.println();
+        }
+    }
+    
     public String getCSRFToken(ResponseBody body) throws IOException {
 		String seek = "\"csrf_token\":\"";
 		DataInputStream in = new DataInputStream(body.byteStream());
@@ -82,6 +155,17 @@ public class Instagram implements AuthenticatedInsta {
 		throw new NullPointerException("Couldn't find CSRFToken");
 	}
 
+    /**
+     *  N:mcd V:3
+        N:csrftoken V:ci2zfTZsVeVA2lFpLOTDCo96xZrgHvLu
+        N:mid V:XDIUAAAAAAHDIr4KNUhdTIJb7-mu
+        N:sessionid V:1301052716%3AtlJ3jZFfxXtqrG%3A4
+        N:rur V:FTW
+        N:shbts V:1546785793.5055385
+        N:shbid V:7846
+        N:ds_user_id V:1301052716
+     */
+    
     public void login(String username, String password) throws IOException {
         if (username == null || password == null) {
             throw new InstagramAuthException("Specify username and password");
@@ -327,6 +411,6 @@ public class Instagram implements AuthenticatedInsta {
     private void validateTagName(String tag) {
         if(tag==null || tag.isEmpty() || tag.startsWith("#")){
             throw new IllegalArgumentException("Please provide non empty tag name that not starts with #");
-        }
-    }
+		}
+	}
 }

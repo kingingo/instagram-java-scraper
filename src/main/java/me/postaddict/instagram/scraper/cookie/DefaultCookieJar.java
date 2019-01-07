@@ -28,7 +28,7 @@ public class DefaultCookieJar implements CookieJar {
             Cookie cookie = it.next();
             if (cookie.expiresAt() < System.currentTimeMillis()) {
                 it.remove();
-            } else if (cookie.matches(url)) {
+            } else if (url == null || cookie.matches(url)) {
                 cookies.add(cookie);
             }
         }
