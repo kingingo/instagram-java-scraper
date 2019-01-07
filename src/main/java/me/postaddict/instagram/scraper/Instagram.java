@@ -80,8 +80,25 @@ public class Instagram implements AuthenticatedInsta {
     
     public void uploadPost(File image) throws IOException {
     	 String upload_id = String.valueOf(System.currentTimeMillis());
-		
-    	 
+/*
+ * Host: www.instagram.com
+User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1
+Accept: 
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Referer: https://www.instagram.com/create/style/
+X-CSRFToken: N0WCl5B6sV5yi208VqSahy8gJ7e0hpTy
+X-Instagram-AJAX: 16b73267f71b
+X-Requested-With: XMLHttpRequest
+Content-Type: multipart/form-data; boundary=---------------------------767836694210806501936569747
+Content-Length: 89870
+Connection: keep-alive
+Cookie: mid=XDImRAAEAAEjhjORd_TivacL8BF0; ig_cb=1; mcd=3; csrftoken=N0WCl5B6sV5yi208VqSahy8gJ7e0hpTy; shbid=7846; shbts=1546790499.6376061; ds_user_id=1301052716; sessionid=1301052716%3AE7M5EbTqo0IGRX%3A17; rur=ATN; urlgen="{\"2001:16b8:14e5:7300:d8d5:8c87:943e:efda\": 8881}:1gga3d:0UkaarHTNTa62dsvUO5rZZXirwQ"
+TE: Trailers
+ * 
+ * 		
+ */
+// 	https://stackoverflow.com/questions/2469451/upload-files-from-java-client-to-a-http-server
 //		 RequestBody requestBody = new MultipartBody.Builder()
 //				 .setType(MultipartBody.FORM)
 //				 .addPart(
