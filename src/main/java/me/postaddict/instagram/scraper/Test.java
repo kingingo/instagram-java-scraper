@@ -32,7 +32,7 @@ public class Test {
                     .build();
             Instagram client = new Instagram(httpClient);
             client.basePage();
-            client.login("feliixistda", "baker1997");
+            client.login("", "");
 			client.basePage();
 			
 			System.out.println("LOGGED IN");
