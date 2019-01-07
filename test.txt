@@ -1,0 +1,14 @@
+-----------------------------767836694210806501936569747
+Content-Disposition: form-data; name="upload_id"
+
+1546887357877
+-----------------------------767836694210806501936569747
+Content-Disposition: form-data; name="photo"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+ÿØÿà
+-----------------------------767836694210806501936569747
+Content-Disposition: form-data; name="media_type"
+
+1
+-----------------------------767836694210806501936569747--
