@@ -12,3 +12,46 @@ Content-Disposition: form-data; name="media_type"
 
 1
 -----------------------------767836694210806501936569747--
+
+
+
+
+
+https://stackoverflow.com/questions/2469451/upload-files-from-java-client-to-a-http-server
+REQUEST:
+Host: www.instagram.com
+User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1
+Accept: */*
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Referer: https://www.instagram.com/create/style/
+X-CSRFToken: N0WCl5B6sV5yi208VqSahy8gJ7e0hpTy
+X-Instagram-AJAX: 16b73267f71b
+X-Requested-With: XMLHttpRequest
+Content-Type: multipart/form-data; boundary=---------------------------767836694210806501936569747
+Content-Length: 89870
+Connection: keep-alive
+Cookie: mid=XDImRAAEAAEjhjORd_TivacL8BF0; ig_cb=1; mcd=3; csrftoken=N0WCl5B6sV5yi208VqSahy8gJ7e0hpTy; shbid=7846; shbts=1546790499.6376061; ds_user_id=1301052716; sessionid=1301052716%3AE7M5EbTqo0IGRX%3A17; rur=ATN; urlgen="{\"2001:16b8:14e5:7300:d8d5:8c87:943e:efda\": 8881}:1gga3d:0UkaarHTNTa62dsvUO5rZZXirwQ"
+TE: Trailers
+
+Response:
+HTTP/2.0 200 OK
+server: nginx
+date: Mon, 07 Jan 2019 18:55:58 GMT
+content-type: application/json; charset=utf-8
+content-length: 69
+vary: Accept-Language, Cookie
+content-language: en
+strict-transport-security: max-age=3600
+cache-control: private, no-cache, no-store, must-revalidate
+pragma: no-cache
+expires: Sat, 01 Jan 2000 00:00:00 GMT
+x-frame-options: SAMEORIGIN
+content-security-policy: report-uri https://www.instagram.com/security/csp_report/; default-src 'self' https://www.instagram.com; img-src https: data: blob:; font-src https: data:; media-src 'self' blob: https://www.instagram.com https://*.cdninstagram.com https://*.fbcdn.net; manifest-src 'self' https://www.instagram.com; script-src 'self' https://instagram.com https://www.instagram.com https://*.www.instagram.com https://*.cdninstagram.com wss://www.instagram.com https://*.facebook.com https://*.fbcdn.net https://*.facebook.net 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' https://*.www.instagram.com https://www.instagram.com 'unsafe-inline'; connect-src 'self' https://instagram.com https://www.instagram.com https://*.www.instagram.com https://graph.instagram.com https://*.graph.instagram.com https://*.cdninstagram.com https://api.instagram.com wss://www.instagram.com wss://edge-chat.instagram.com https://*.facebook.com https://*.fbcdn.net https://*.facebook.net chrome-extension://boadgeojelhgndaghljhdicfkmllpafd; worker-src 'self' https://www.instagram.com; frame-src 'self' https://instagram.com https://www.instagram.com https://staticxx.facebook.com https://www.facebook.com https://web.facebook.com https://connect.facebook.net https://m.facebook.com; object-src 'none'; upgrade-insecure-requests
+x-content-type-options: nosniff
+x-xss-protection: 0
+set-cookie: rur=FTW; Domain=.instagram.com; HttpOnly; Path=/; Secure
+set-cookie: ds_user_id=1301052716; Domain=.instagram.com; expires=Sun, 07-Apr-2019 18:55:58 GMT; Max-Age=7776000; Path=/; Secure
+set-cookie: urlgen="{\"2001:16b8:14e5:7300:d8d5:8c87:943e:efda\": 8881}:1gga46:f8gZUypx_U4zNmKIJFI3nkyAd8g"; Domain=.instagram.com; HttpOnly; Path=/; Secure
+set-cookie: csrftoken=N0WCl5B6sV5yi208VqSahy8gJ7e0hpTy; Domain=.instagram.com; expires=Mon, 06-Jan-2020 18:55:58 GMT; Max-Age=31449600; Path=/; Secure
+X-Firefox-Spdy: h2
