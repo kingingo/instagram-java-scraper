@@ -37,7 +37,7 @@ public class Test {
 			
 			System.out.println("LOGGED IN");
 
-			client.uploadPost(new File("/home/felix/Pictures/photo.jpg"));
+			client.uploadPost(new File("C:"+File.separator+"Users"+File.separator+"felix.obenaus"+File.separator+"Downloads"+File.separator+"photo.jpg"));
 			
 			System.out.println("Photo has been uploaded");
 		} catch (IOException e) {

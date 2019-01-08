@@ -81,46 +81,12 @@ public class Instagram implements AuthenticatedInsta {
     public void uploadPost(File image) throws IOException {
     	 String upload_id = String.valueOf(System.currentTimeMillis());
 
-// 	
-//		 RequestBody requestBody = new MultipartBody.Builder()
-//				 .setType(MultipartBody.FORM)
-//				 .addPart(
-//				          Headers.of("Content-Disposition", "form-data; name=\"upload_id\""),
-//				          RequestBody.create(null, upload_id))
-//				 .addPart(
-//				          Headers.of("Content-Disposition", "form-data; name=\"photo\""),
-//				          RequestBody.create(MediaType.parse("image/jpeg"), image))
-//				 .build();
-    	 RequestBody requestBody = new RequestBody() {
-    		 
-			@Override
-			public void writeTo(BufferedSink sink) throws IOException {
-				
-				sink.writeUtf8(
-						"Content-Disposition: form-data; name=\"upload_id\"\n" + 
-						"\n" + 
-						upload_id+"\n" + 
-						
-						"Content-Disposition: form-data; name=\"photo\"; filename=\"photo.jpg\"\n" + 
-						"Content-Type: image/jpeg\n" + 
-						"\n");
-				byte[] bytes = new byte[(int) image.length()];
-				FileInputStream in = new FileInputStream(image);
-				in.read(bytes);
-				in.close();
-				
-				sink.write(bytes);
-				sink.writeUtf8(
-						"Content-Disposition: form-data; name=\"media_type\"\n" + 
-						"\n" + 
-						"1\n" );
-			}
-			
-			@Override
-			public MediaType contentType() {
-				return MediaType.parse("application/octet-stream");
-			}
-		};
+		 RequestBody requestBody = new MultipartBody.Builder()
+				 .setType(MultipartBody.FORM)
+				 .addFormDataPart("upload_id", upload_id)
+				 .addFormDataPart("photo", "photo.jpg", RequestBody.create(MediaType.parse("image/jpeg"), image))
+				 .addFormDataPart("media_type", "1")
+				 .build();
 			
 		Request request = new Request.Builder()
 				.url(Endpoint.POST_UPLOAD)
