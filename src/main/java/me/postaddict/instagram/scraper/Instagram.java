@@ -55,13 +55,15 @@ public class Instagram implements AuthenticatedInsta {
     protected final Mapper mapper;
     protected final DelayHandler delayHandler;
     protected String csrf_token;
+    protected String rollout_hash;
 
     public Instagram(OkHttpClient httpClient) {
-        this(httpClient, new ModelMapper(), new DefaultDelayHandler(),"");
+        this(httpClient, new ModelMapper(), new DefaultDelayHandler(),"","1");
     }
 
     protected Request withCsrfToken(Request request) {
     	return request.newBuilder()
+              .addHeader("X-Instagram-AJAX", rollout_hash)
               .addHeader("X-CSRFToken", csrf_token)
               .build();
     }
@@ -74,13 +76,70 @@ public class Instagram implements AuthenticatedInsta {
         Response response = executeHttpRequest(request);
         try (ResponseBody body = response.body()){
         	if(this.csrf_token.isEmpty())
-        		this.csrf_token=getCSRFToken(body);
+        		getCSRFToken(body);
+        	else if(this.rollout_hash.equalsIgnoreCase("1"))
+            	getRolloutHash(body);
+        }
+    }
+    
+    private void showCookies() {
+    	List<Cookie> cookies = this.httpClient.cookieJar().loadForRequest(null);
+        for(Cookie c : cookies) {
+        	System.out.println(c);
+        }
+    }
+    
+    private String cookieString() {
+    	StringBuilder builder = new StringBuilder();
+    	List<Cookie> cookies = this.httpClient.cookieJar().loadForRequest(null);
+    	
+    	for(Cookie c : cookies) {
+    		builder.append(c.name()).append("=").append(c.value()).append(";");
+    	}
+    	
+    	builder.deleteCharAt(builder.length()-1);
+    	return builder.toString();
+    }
+    
+    public void deletePost(long media_id) throws IOException {
+    	RequestBody rebody = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"), "");
+    	
+    	Request request = new Request.Builder()
+    				.url("https://www.instagram.com/create/"+media_id+"/delete/")
+    				.addHeader("x-requested-with", "XMLHttpRequest")
+    				.post(rebody)
+    				.build();
+    	
+    	Response response = executeHttpRequest(withCsrfToken(request));
+        try(ResponseBody body = response.body()) {
+        	System.out.println();
+        	System.out.println("Header: "+response.headers());
+        	System.out.println();
+            System.out.println("Body: "+body.string());
+        	System.out.println();
+        }
+    }
+    
+    public void createStyle() throws IOException {
+    	
+    	Request request = new Request.Builder()
+    				.url("https://www.instagram.com/create/style/")
+    				.build();
+    	
+    	Response response = executeHttpRequest(withCsrfToken(request));
+        try(ResponseBody body = response.body()) {
+        	System.out.println();
+        	System.out.println("Header: "+response.headers());
+        	System.out.println();
+            System.out.println("Body: "+body.string());
+        	System.out.println();
         }
     }
     
     public void uploadPost(File image) throws IOException {
+    	
+    	
     	 String upload_id = String.valueOf(System.currentTimeMillis());
-
 		 RequestBody requestBody = new MultipartBody.Builder()
 				 .setType(MultipartBody.FORM)
 				 .addFormDataPart("upload_id", upload_id)
@@ -88,12 +147,15 @@ public class Instagram implements AuthenticatedInsta {
 				 .addFormDataPart("media_type", "1")
 				 .build();
 			
+		
+		 
 		Request request = new Request.Builder()
 				.url(Endpoint.POST_UPLOAD)
-				.addHeader("X-Instagram-AJAX", "1")
 				.addHeader("x-requested-with", "XMLHttpRequest")
 				.addHeader("Origin", "https://www.instagram.com")
-				.addHeader("Referer", "https://www.instagram.com/create/crop/")
+				.addHeader("Pragma", "no-cache")
+                .addHeader(Endpoint.REFERER, "https://www.instagram.com/create/style/")
+				.addHeader("cookie", cookieString())
 				.post(requestBody)
 				.build();
 		
@@ -107,30 +169,30 @@ public class Instagram implements AuthenticatedInsta {
         }
     }
     
-    public String getCSRFToken(ResponseBody body) throws IOException {
-		String seek = "\"csrf_token\":\"";
-		DataInputStream in = new DataInputStream(body.byteStream());
+    private void getCSRFToken(ResponseBody body) throws IOException {
+    	this.csrf_token=getToken("\"csrf_token\":\"",32,body.byteStream());
+    }
+    
+    private void getRolloutHash(ResponseBody body){
+    	try {
+			this.rollout_hash=getToken("\"rollout_hash\":\"",12,body.byteStream());
+		} catch (IOException e) {
+			this.rollout_hash="1";
+		}
+    }
+    
+    private String getToken(String seek, int length ,InputStream stream) throws IOException {
+		DataInputStream in = new DataInputStream(stream);
 		
 		String line;
 		while((line = in.readLine())!=null) {
 			int index = line.indexOf(seek);
 			if(index != -1) {
-				return line.substring(index+seek.length(),index+seek.length()+32);
+				return line.substring(index+seek.length(),index+seek.length()+length);
 			}
 		}
-		throw new NullPointerException("Couldn't find CSRFToken");
+		throw new NullPointerException("Couldn't find "+seek);
 	}
-
-    /**
-     *  N:mcd V:3
-        N:csrftoken V:ci2zfTZsVeVA2lFpLOTDCo96xZrgHvLu
-        N:mid V:XDIUAAAAAAHDIr4KNUhdTIJb7-mu
-        N:sessionid V:1301052716%3AtlJ3jZFfxXtqrG%3A4
-        N:rur V:FTW
-        N:shbts V:1546785793.5055385
-        N:shbid V:7846
-        N:ds_user_id V:1301052716
-     */
     
     public void login(String username, String password) throws IOException {
         if (username == null || password == null) {
@@ -151,6 +213,7 @@ public class Instagram implements AuthenticatedInsta {
                 .build();
 
         Response response = executeHttpRequest(withCsrfToken(request));
+        
         try(InputStream jsonStream = response.body().byteStream()) {
             if(!mapper.isAuthenticated(jsonStream)){
                 throw new InstagramAuthException("Credentials rejected by instagram");
@@ -164,6 +227,7 @@ public class Instagram implements AuthenticatedInsta {
                 .header(Endpoint.REFERER, Endpoint.BASE_URL + "/")
                 .build();
         Response response = executeHttpRequest(withCsrfToken(request));
+        
         try(InputStream jsonStream = response.body().byteStream()) {
             return getMediaByCode(mapper.getLastMediaShortCode(jsonStream)).getOwner();
         }

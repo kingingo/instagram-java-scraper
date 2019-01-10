@@ -2,14 +2,11 @@ package me.postaddict.instagram.scraper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 import me.postaddict.instagram.scraper.cookie.CookieHashSet;
 import me.postaddict.instagram.scraper.cookie.DefaultCookieJar;
 import me.postaddict.instagram.scraper.interceptor.ErrorInterceptor;
 import me.postaddict.instagram.scraper.interceptor.UserAgentInterceptor;
-import me.postaddict.instagram.scraper.interceptor.UserAgents;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
@@ -35,8 +32,10 @@ public class Test {
             client.login("", "");
 			client.basePage();
 			
-			System.out.println("LOGGED IN");
-
+			System.out.println("LOGGED IN  ");
+//			client.deletePost(client.getMediaByCode("BsdH_BtlDxP").getId());
+//			client.createStyle();
+			
 			client.uploadPost(new File("C:"+File.separator+"Users"+File.separator+"felix.obenaus"+File.separator+"Downloads"+File.separator+"photo.jpg"));
 			
 			System.out.println("Photo has been uploaded");

@@ -16,7 +16,6 @@ Content-Disposition: form-data; name="media_type"
 
 
 
-
 https://stackoverflow.com/questions/2469451/upload-files-from-java-client-to-a-http-server
 REQUEST:
 Host: www.instagram.com
