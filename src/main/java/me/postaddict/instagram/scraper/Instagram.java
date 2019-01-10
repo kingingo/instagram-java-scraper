@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieManager;
@@ -136,6 +137,7 @@ public class Instagram implements AuthenticatedInsta {
         }
     }
     
+    //https://github.com/ping/instagram_private_api/blob/master/instagram_web_api/client.py
     public void uploadPost(File image) throws IOException {
     	
     	
@@ -147,17 +149,62 @@ public class Instagram implements AuthenticatedInsta {
 				 .addFormDataPart("media_type", "1")
 				 .build();
 			
-		
-		 
 		Request request = new Request.Builder()
 				.url(Endpoint.POST_UPLOAD)
+    			.addHeader("Host", "www.instagram.com")
+    			.addHeader("Accept", "*/*")
+    			.addHeader("Accept-Language", "de,en-US;q=0.7,en;q=0.3")
+    			.addHeader("Accept-Encoding", "gzip, deflate, br")
 				.addHeader("x-requested-with", "XMLHttpRequest")
 				.addHeader("Origin", "https://www.instagram.com")
-				.addHeader("Pragma", "no-cache")
-                .addHeader(Endpoint.REFERER, "https://www.instagram.com/create/style/")
-				.addHeader("cookie", cookieString())
+				.addHeader("Connection", "close")
+    			.addHeader("Pragma", "no-cache")
+    			.addHeader("Cache-Control", "no-cache")
+    			.addHeader("TE", "Trailers")
+    			.addHeader("DNT", "1")
+                .addHeader(Endpoint.REFERER, "https://www.instagram.com/create/crop/")
+				.addHeader("Cookie", cookieString())
 				.post(requestBody)
 				.build();
+    	
+//    	RequestBody requestBody = new RequestBody() {
+//			
+//			@Override
+//			public void writeTo(BufferedSink sink) throws IOException {
+//				File file = new File("C:"+File.separator+"Users"+File.separator+"felix.obenaus"+File.separator+"git"+File.separator+"instagram-java-scraper"+File.separator+"body.txt");
+//				byte[] bytes = new byte[(int)file.length()];
+//				FileInputStream in = new FileInputStream(file);
+//				in.read(bytes);
+//				in.close();
+//				System.out.println("LENGTH: "+bytes.length);
+//				sink.write(bytes);
+//			}
+//			
+//			@Override
+//			public MediaType contentType() {
+//				return MediaType.parse("multipart/form-data; boundary=---------------------------27155126128722");
+//			}
+//		};
+//    	
+//    	Request request = new Request.Builder()
+//    			.url(Endpoint.POST_UPLOAD)
+//    			.addHeader("Host", "www.instagram.com")
+//    			.addHeader("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/12.0 Mobile/15A372 Safari/604.1")
+//    			.addHeader("Accept", "*/*")
+//    			.addHeader("Accept-Language", "de,en-US;q=0.7,en;q=0.3")
+//    			.addHeader("Accept-Encoding", "gzip, deflate, br")
+//    			.addHeader("Referer", "https://www.instagram.com/create/style/")
+//    			.addHeader("X-Requested-With", "XMLHttpRequest")
+////    			.addHeader("Content-Type", "multipart/form-data; boundary=---------------------------27155126128722")
+//    			.addHeader("Content-Length", "774661")//390784
+//    			.addHeader("DNT", "1")
+//    			.addHeader("Connection", "keep-alive")
+//    			.addHeader("Cookie", cookieString())
+//    			.addHeader("Pragma", "no-cache")
+//    			.addHeader("Cache-Control", "no-cache")
+//    			.addHeader("TE", "Trailers")
+//    			.post(requestBody)
+//    			.build();
 		
         Response response = executeHttpRequest(withCsrfToken(request));
         try(ResponseBody body = response.body()) {
